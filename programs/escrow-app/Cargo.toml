@@ -1,4 +1,5 @@
 [lints.rust]
+ambiguous_glob_reexports = "allow"
 unexpected_cfgs = { level = "allow", check-cfg = [
     'cfg(custom_heap)',
     'cfg(custom_panic)',

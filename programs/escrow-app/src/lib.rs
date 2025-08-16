@@ -30,4 +30,8 @@ pub mod escrow_app {
         instructions::take_offer::send_tokens_from_taker_to_maker(&ctx)?;
         instructions::take_offer::withdraw_from_vault_and_close_it(ctx)
     }
+
+    pub fn cancel_offer(ctx: Context<CancelOffer>) -> Result<()> {
+        instructions::cancel_offer::withdraw_from_vault_and_close_it(ctx)
+    }
 }
