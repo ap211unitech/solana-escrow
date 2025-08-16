@@ -8,7 +8,6 @@ pub mod utils;
 
 use anchor_lang::prelude::*;
 
-pub use constants::*;
 pub use instructions::*;
 
 declare_id!("5gdV4b4cPnnRkVSvBq8WxCxRfyq7i5z9R5scwm3BA4ps");
@@ -17,7 +16,14 @@ declare_id!("5gdV4b4cPnnRkVSvBq8WxCxRfyq7i5z9R5scwm3BA4ps");
 pub mod escrow_app {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        initialize::handler(ctx)
+    pub fn make_offer(
+        ctx: Context<MakeOffer>,
+        offer_id: u64,
+        token_a_offered_amount: u64,
+        token_b_wanted_amount: u64,
+    ) -> Result<()> {
+        instructions::send_offered_tokens_to_vault(&ctx, token_a_offered_amount)?;
+
+        Ok(())
     }
 }

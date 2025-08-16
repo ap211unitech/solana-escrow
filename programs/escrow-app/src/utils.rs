@@ -5,8 +5,8 @@ use anchor_spl::token_interface::{
 };
 
 pub fn transfer_tokens<'info>(
-    from: InterfaceAccount<'info, TokenAccount>,
-    to: InterfaceAccount<'info, TokenAccount>,
+    from: &InterfaceAccount<'info, TokenAccount>,
+    to: &InterfaceAccount<'info, TokenAccount>,
     amount: &u64,
     mint: &InterfaceAccount<'info, Mint>,
     signer: &Signer<'info>,
