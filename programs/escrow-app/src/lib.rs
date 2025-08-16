@@ -22,7 +22,12 @@ pub mod escrow_app {
         token_a_offered_amount: u64,
         token_b_amount_wanted: u64,
     ) -> Result<()> {
-        instructions::send_offered_tokens_to_vault(&ctx, token_a_offered_amount)?;
-        instructions::save_offer(ctx, offer_id, token_b_amount_wanted)
+        instructions::make_offer::send_offered_tokens_to_vault(&ctx, token_a_offered_amount)?;
+        instructions::make_offer::save_offer(ctx, offer_id, token_b_amount_wanted)
+    }
+
+    pub fn take_offer(ctx: Context<TakeOffer>) -> Result<()> {
+        instructions::take_offer::send_tokens_from_taker_to_maker(&ctx)?;
+        instructions::take_offer::withdraw_from_vault_and_close_it(ctx)
     }
 }

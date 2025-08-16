@@ -2,13 +2,68 @@ use anchor_lang::prelude::*;
 
 use anchor_spl::{
     associated_token::AssociatedToken,
-    token_interface::{Mint, TokenAccount, TokenInterface},
+    token_interface::{
+        close_account, transfer_checked, CloseAccount, Mint, TokenAccount, TokenInterface,
+        TransferChecked,
+    },
 };
 
-use crate::state::Offer;
+use crate::{state::Offer, utils::transfer_tokens};
 
-pub fn take_offer() -> Result<()> {
-    Ok(())
+pub fn send_tokens_from_taker_to_maker(ctx: &Context<TakeOffer>) -> Result<()> {
+    transfer_tokens(
+        &ctx.accounts.taker_token_account_b,
+        &ctx.accounts.maker_token_account_b,
+        &ctx.accounts.offer.token_b_amount_wanted,
+        &ctx.accounts.token_mint_b,
+        &ctx.accounts.taker,
+        &ctx.accounts.token_program,
+    )
+}
+
+pub fn withdraw_from_vault_and_close_it(ctx: Context<TakeOffer>) -> Result<()> {
+    // Transfer tokens held by vault token account (which is PDA for token_mint_a and maker) to taker's token account
+    let seeds = &[
+        b"offer",
+        ctx.accounts.maker.key.as_ref(),
+        &ctx.accounts.offer.id.to_le_bytes()[..],
+        &[ctx.accounts.offer.bump],
+    ];
+    let signer_seeds = [&seeds[..]];
+
+    let accounts = TransferChecked {
+        from: ctx.accounts.vault.to_account_info(),
+        to: ctx.accounts.taker_token_account_a.to_account_info(),
+        authority: ctx.accounts.offer.to_account_info(),
+        mint: ctx.accounts.token_mint_a.to_account_info(),
+    };
+
+    let cpi_context = CpiContext::new_with_signer(
+        ctx.accounts.token_program.to_account_info(),
+        accounts,
+        &signer_seeds,
+    );
+
+    transfer_checked(
+        cpi_context,
+        ctx.accounts.vault.amount,
+        ctx.accounts.token_mint_a.decimals,
+    )?;
+
+    // Vault can be closed safely now
+    let accounts = CloseAccount {
+        account: ctx.accounts.vault.to_account_info(),
+        authority: ctx.accounts.offer.to_account_info(),
+        destination: ctx.accounts.maker.to_account_info(),
+    };
+
+    let cpi_context = CpiContext::new_with_signer(
+        ctx.accounts.token_program.to_account_info(),
+        accounts,
+        &signer_seeds,
+    );
+
+    close_account(cpi_context)
 }
 
 /// The `TakeOffer` struct defines the accounts required to accept an existing offer.
