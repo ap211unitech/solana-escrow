@@ -20,10 +20,9 @@ pub mod escrow_app {
         ctx: Context<MakeOffer>,
         offer_id: u64,
         token_a_offered_amount: u64,
-        token_b_wanted_amount: u64,
+        token_b_amount_wanted: u64,
     ) -> Result<()> {
         instructions::send_offered_tokens_to_vault(&ctx, token_a_offered_amount)?;
-
-        Ok(())
+        instructions::save_offer(ctx, offer_id, token_b_amount_wanted)
     }
 }

@@ -21,6 +21,22 @@ pub fn send_offered_tokens_to_vault(
     )
 }
 
+pub fn save_offer(
+    ctx: Context<MakeOffer>,
+    offer_id: u64,
+    token_b_amount_wanted: u64,
+) -> Result<()> {
+    ctx.accounts.offer.set_inner(Offer {
+        id: offer_id,
+        maker: *ctx.accounts.maker.key,
+        token_mint_a: ctx.accounts.token_mint_a.key(),
+        token_mint_b: ctx.accounts.token_mint_b.key(),
+        token_b_amount_wanted,
+        bump: ctx.bumps.offer,
+    });
+    Ok(())
+}
+
 /// The `MakeOffer` struct defines the accounts required to make a new trading offer.
 ///
 /// It uses a Program Derived Address (PDA) to create a unique and verifiable `offer`
