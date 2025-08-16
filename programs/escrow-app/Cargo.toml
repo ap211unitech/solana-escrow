@@ -1,3 +1,11 @@
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = [
+    'cfg(custom_heap)',
+    'cfg(custom_panic)',
+    'cfg(anchor_debug)',
+    'cfg(solana)',
+] }
+
 [package]
 name = "escrow-app"
 version = "0.1.0"
@@ -19,4 +27,3 @@ idl-build = ["anchor-lang/idl-build"]
 
 [dependencies]
 anchor-lang = "0.31.1"
-
