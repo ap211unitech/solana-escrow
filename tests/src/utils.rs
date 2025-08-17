@@ -8,8 +8,19 @@ use solana_client::nonblocking::rpc_client::RpcClient;
 use spl_associated_token_account::get_associated_token_address;
 use spl_token::{id, solana_program::pubkey::Pubkey, state::Mint, ui_amount_to_amount};
 
-pub async fn initialize() {
-    let program_id = "5gdV4b4cPnnRkVSvBq8WxCxRfyq7i5z9R5scwm3BA4ps";
+pub struct SetupStruct {
+    pub rpc_client: RpcClient,
+    pub maker: Keypair,
+    pub taker: Keypair,
+    pub token_mint_a: Pubkey,
+    pub token_mint_b: Pubkey,
+    pub token_mint_a_decimals: u8,
+    pub token_mint_b_decimals: u8,
+    pub maker_ata_a: Pubkey,
+    pub taker_ata_b: Pubkey,
+}
+
+pub async fn initialize() -> SetupStruct {
     let rpc_client = RpcClient::new_with_commitment(
         "http://localhost:8899".into(),
         CommitmentConfig::confirmed(),
@@ -78,6 +89,18 @@ pub async fn initialize() {
     )
     .await;
     println!("Minted 80 Token B to Taker's ATA.");
+
+    return SetupStruct {
+        rpc_client,
+        maker,
+        taker,
+        token_mint_a,
+        token_mint_b,
+        token_mint_a_decimals,
+        token_mint_b_decimals,
+        maker_ata_a,
+        taker_ata_b,
+    };
 }
 
 async fn create_token_mint(rpc_client: &RpcClient, token_mint_authority: &Keypair) -> (Pubkey, u8) {

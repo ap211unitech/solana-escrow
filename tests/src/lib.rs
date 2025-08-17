@@ -1,4 +1,5 @@
 #[cfg(test)]
+mod make_offer;
 mod utils;
 
 #[tokio::test]
