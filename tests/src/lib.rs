@@ -1,8 +1,13 @@
-#[cfg(test)]
-mod make_offer;
 mod utils;
 
-#[tokio::test]
-pub async fn init() {
-    assert!(1 == 2 - 0 + 1 - 2)
+#[cfg(test)]
+mod make_offer;
+
+#[cfg(test)]
+mod cancel_offer;
+
+#[cfg(test)]
+#[test]
+pub fn init() {
+    assert!(1 == 3 - 2)
 }

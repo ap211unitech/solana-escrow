@@ -18,6 +18,8 @@ use escrow_app::{self, state::Offer};
 
 #[tokio::test]
 async fn make_offer() {
+    println!("\n//// make_offer instruction ////");
+
     // Setup environment: funded accounts, minted tokens, ATAs, balances
     let SetupStruct {
         rpc_client,
@@ -55,7 +57,7 @@ async fn make_offer() {
     let vault_ata = get_associated_token_address(&offer_pda, &token_mint_a);
 
     // Send transaction via Anchor client
-    let sig = program
+    let signature = program
         .request()
         .accounts(escrow_app::accounts::MakeOffer {
             maker: maker_pubkey,
@@ -74,11 +76,10 @@ async fn make_offer() {
             token_b_amount_wanted,
         })
         .send()
-        // .signer(&maker) // include signer
         .await
         .unwrap();
 
-    println!("MakeOffer Successful with signature: {}", sig);
+    println!("MakeOffer Successful with signature: {}", signature);
 
     // Assert vault balance == token_a_offered_amount
     let vault_acc = rpc_client.get_account(&vault_ata).await.unwrap();
@@ -102,4 +103,6 @@ async fn make_offer() {
     assert_eq!(offer.token_mint_a, token_mint_a);
     assert_eq!(offer.token_mint_b, token_mint_b);
     assert_eq!(offer.token_b_amount_wanted, token_b_amount_wanted);
+
+    println!();
 }

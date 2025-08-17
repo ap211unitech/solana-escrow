@@ -16,4 +16,4 @@ cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "RUST_LOG=info cargo test -- --nocapture"
+test = "RUST_LOG=info cargo test -- --nocapture --test-threads=1"
