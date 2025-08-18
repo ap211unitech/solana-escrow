@@ -7,6 +7,9 @@ mod make_offer;
 mod cancel_offer;
 
 #[cfg(test)]
+mod take_offer;
+
+#[cfg(test)]
 #[test]
 pub fn init() {
     assert!(1 == 3 - 2)
