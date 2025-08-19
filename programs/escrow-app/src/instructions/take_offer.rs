@@ -8,9 +8,13 @@ use anchor_spl::{
     },
 };
 
-use crate::{state::Offer, utils::transfer_tokens};
+use crate::{error::ErrorCode, state::Offer, utils::transfer_tokens};
 
 pub fn send_tokens_from_taker_to_maker(ctx: &Context<TakeOffer>) -> Result<()> {
+    if ctx.accounts.taker.key() == ctx.accounts.maker.key() {
+        return Err(ErrorCode::TakerShouldNotBeMaker.into());
+    }
+
     transfer_tokens(
         &ctx.accounts.taker_token_account_b,
         &ctx.accounts.maker_token_account_b,
